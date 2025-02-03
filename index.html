@@ -31,7 +31,7 @@
     <script>
         // Загружаем бинарный файл из репозитория
         async function loadBinaryFile() {
-            const response = await fetch('https://github.com/Mark65537/Goal-3-mod-site/raw/refs/heads/master/ROMS/Kunio_Kun_no_Nekketsu_Soccer_League_4pl_t16_hack.nes'); // Укажите путь к файлу
+            const response = await fetch('/ROMS/Kunio_Kun_no_Nekketsu_Soccer_League_4pl_t16_hack.nes'); // Укажите путь к файлу
             const arrayBuffer = await response.arrayBuffer();
             return new Uint8Array(arrayBuffer);
         }
