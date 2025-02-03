@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Редактирование бинарного файла</title>
+</head>
+<body>
+    <h1>Редактирование бинарного файла</h1>
+    <table id="editableTable" border="1">
+        <thead>
+            <tr>
+                <th>Address Hex</th>
+                <th>Size</th>
+                <th>Value (Hex)</th>
+                <th>Text</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>319f-31a3</td>
+                <td>5</td>
+                <td contenteditable="true">9f c6 c0 bc c1</td>
+                <td contenteditable="true">Кунио</td>
+            </tr>
+            <!-- Добавьте больше строк по необходимости -->
+        </tbody>
+    </table>
+    <button onclick="downloadModifiedFile()">Скачать измененный файл</button>
+
+    <script>
+        // Загружаем бинарный файл из репозитория
+        async function loadBinaryFile() {
+            const response = await fetch('https://github.com/Mark65537/Goal-3-mod-site/raw/refs/heads/master/ROMS/Kunio_Kun_no_Nekketsu_Soccer_League_4pl_t16_hack.nes'); // Укажите путь к файлу
+            const arrayBuffer = await response.arrayBuffer();
+            return new Uint8Array(arrayBuffer);
+        }
+
+        // Преобразуем hex-строку в массив байт
+        function hexStringToBytes(hex) {
+            const bytes = [];
+            hex = hex.replace(/\s+/g, ''); // Убираем пробелы
+            for (let i = 0; i < hex.length; i += 2) {
+                bytes.push(parseInt(hex.substr(i, 2), 16));
+            }
+            return bytes;
+        }
+
+        // Преобразуем массив байт в hex-строку
+        function bytesToHexString(bytes) {
+            return Array.from(bytes, byte => byte.toString(16).padStart(2, '0')).join(' ');
+        }
+
+        // Основная функция для скачивания измененного файла
+        async function downloadModifiedFile() {
+            const binaryData = await loadBinaryFile();
+            const table = document.getElementById("editableTable");
+
+            // Проходим по строкам таблицы и применяем изменения
+            for (let row of table.rows) {
+                if (row.rowIndex === 0) continue; // Пропускаем заголовок
+
+                const addressRange = row.cells[0].innerText.split('-');
+                const startAddress = parseInt(addressRange[0], 16);
+                const endAddress = parseInt(addressRange[1], 16);
+
+                const hexValues = row.cells[2].innerText;
+                const newBytes = hexStringToBytes(hexValues);
+
+                // Заменяем байты в бинарном файле
+                for (let i = 0; i < newBytes.length; i++) {
+                    binaryData[startAddress + i] = newBytes[i];
+                }
+            }
+
+            // Создаем Blob и ссылку для скачивания
+            const blob = new Blob([binaryData], { type: 'application/octet-stream' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'modified_file.bin';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>
