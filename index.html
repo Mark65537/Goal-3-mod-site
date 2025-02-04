@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Редактирование бинарного файла</title>
 </head>
+
 <body>
     <h1>Редактирование бинарного файла</h1>
     <table id="editableTable" border="1">
@@ -31,7 +33,8 @@
     <script>
         // Загружаем бинарный файл из репозитория
         async function loadBinaryFile() {
-            const response = await fetch('/ROMS/Kunio_Kun_no_Nekketsu_Soccer_League_4pl_t16_hack.nes'); // Укажите путь к файлу
+            const fileUrl = 'https://cdn.jsdelivr.net/gh/Username/Goal-3-mod-site@master/ROMS/Kunio_Kun_no_Nekketsu_Soccer_League_4pl_t16_hack.nes';
+            const response = await fetch(fileUrl);
             const arrayBuffer = await response.arrayBuffer();
             return new Uint8Array(arrayBuffer);
         }
@@ -86,4 +89,5 @@
         }
     </script>
 </body>
+
 </html>
